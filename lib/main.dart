@@ -1,4 +1,14 @@
+// File: lib/main.dart
+// Purpose: App entry point and home screen for MidRange OpsHub
+// ───────────────────────────────────────────────────────────────────────────
+// CHANGELOG:
+// [2025-05-06] Added navigation to TicketsScreen, KbScreen, EnvStatusScreen, and ChangeRequestsScreen.
+
 import 'package:flutter/material.dart';
+import 'screens/tickets_screen.dart';
+import 'screens/kb_screen.dart';
+import 'screens/env_status_screen.dart';
+import 'screens/change_requests_screen.dart';
 
 void main() => runApp(const MidRangeOpsHubApp());
 
@@ -50,8 +60,29 @@ class HomeScreen extends StatelessWidget {
       subtitle: Text(subtitle),
       trailing: const Icon(Icons.arrow_forward_ios),
       onTap: () {
-        // Navigation placeholder
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Coming soon: $title')));
+        if (title == 'Tickets') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const TicketsScreen()),
+          );
+        } else if (title == 'Knowledge Base') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const KbScreen()),
+          );
+        } else if (title == 'Environment Status') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const EnvStatusScreen()),
+          );
+        } else if (title == 'Change Requests') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ChangeRequestsScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Coming soon: $title')));
+        }
       },
     );
   }
