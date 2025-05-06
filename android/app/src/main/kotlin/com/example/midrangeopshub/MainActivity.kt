@@ -2,7 +2,6 @@
 // Purpose: Main entry point for the Android version of the Flutter app
 // CHANGELOG:
 // [2025-05-06] Initial creation with Android v2 embedding for MidRange OpsHub
-// [2025-05-06] Per GitHub, this file is no longer required.
 
 package com.example.midrangeopshub
 

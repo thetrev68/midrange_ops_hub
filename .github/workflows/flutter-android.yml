@@ -1,8 +1,9 @@
 # File: .github/workflows/flutter-android.yml
 # Purpose: CI workflow to build APK for MidRange OpsHub
-# ───────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # CHANGELOG:
 # [2025-05-06] Corrected artifact action version for upload compatibility.
+# [2025-05-06] Added sanity check to fail early if AndroidManifest.xml is missing.
 
 name: Build Flutter APK
 
@@ -24,6 +25,13 @@ jobs:
         with:
           flutter-version: '3.19.0'
 
+      - name: Check for AndroidManifest.xml
+        run: |
+          if [ ! -f android/app/src/main/AndroidManifest.xml ]; then
+            echo "::error file=android/app/src/main/AndroidManifest.xml::Missing AndroidManifest.xml. Ensure android/ folder is committed."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -31,7 +39,7 @@ jobs:
         run: flutter build apk --debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4  # ✅ Use newest, non-deprecated version        
+        uses: actions/upload-artifact@v4  # ✅ Use newest, non-deprecated version
         with:
           name: MidRangeOpsHub-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
