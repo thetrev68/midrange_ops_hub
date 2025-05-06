@@ -6,6 +6,7 @@
 # [2025-05-06] Added sanity check to fail early if AndroidManifest.xml is missing.
 # [2025-05-06] Added flutter doctor step to debug runner configuration.
 # [2025-05-06] Fixed working directory nesting issue by reverting to default path.
+# [2025-05-06] Corrected checkout path to root to prevent double-folder nesting.
 
 name: Build Flutter APK
 
@@ -21,6 +22,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          path: .
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
