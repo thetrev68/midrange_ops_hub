@@ -1,0 +1,37 @@
+# Flutter & Dart
+build/
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+pubspec.lock
+*.log
+
+# IntelliJ / VS Code / IDEs
+.idea/
+*.iml
+.vscode/
+
+# Android-specific
+android/.gradle/
+.gradle
+.cxx/
+local.properties
+GeneratedPluginRegistrant.java
+gradle-wrapper.jar
+/gradlew
+/gradlew.bat
+/captures/
+
+# Keystore & signing
+key.properties
+**/*.keystore
+**/*.jks
+
+# macOS & iOS (if ever ported)
+ios/Flutter/Flutter.podspec
+ios/Runner.xcworkspace/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
