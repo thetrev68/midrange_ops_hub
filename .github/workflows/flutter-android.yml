@@ -5,7 +5,7 @@
 # [2025-05-06] Corrected artifact action version for upload compatibility.
 # [2025-05-06] Added sanity check to fail early if AndroidManifest.xml is missing.
 # [2025-05-06] Added flutter doctor step to debug runner configuration.
-# [2025-05-06] Fixed working directory mismatch by setting correct checkout path and run context.
+# [2025-05-06] Fixed working directory nesting issue by reverting to default path.
 
 name: Build Flutter APK
 
@@ -18,15 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: midrange_ops_hub
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-        with:
-          path: midrange_ops_hub
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
