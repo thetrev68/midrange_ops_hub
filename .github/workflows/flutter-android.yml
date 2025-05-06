@@ -4,6 +4,7 @@
 # CHANGELOG:
 # [2025-05-06] Corrected artifact action version for upload compatibility.
 # [2025-05-06] Added sanity check to fail early if AndroidManifest.xml is missing.
+# [2025-05-06] Added flutter doctor step to debug runner configuration.
 
 name: Build Flutter APK
 
@@ -31,6 +32,9 @@ jobs:
             echo "::error file=android/app/src/main/AndroidManifest.xml::Missing AndroidManifest.xml. Ensure android/ folder is committed."
             exit 1
           fi
+
+      - name: Run flutter doctor
+        run: flutter doctor -v
 
       - name: Install dependencies
         run: flutter pub get
