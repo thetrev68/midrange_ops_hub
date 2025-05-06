@@ -2,7 +2,7 @@
 # Purpose: CI workflow to build APK for MidRange OpsHub
 # ───────────────────────────────────────────────────────────────────────────
 # CHANGELOG:
-# [2025-05-06] Initial CI setup to build and archive APK on every push.
+# [2025-05-06] Corrected artifact action version for upload compatibility.
 
 name: Build Flutter APK
 
@@ -31,7 +31,7 @@ jobs:
         run: flutter build apk --debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: MidRangeOpsHub-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
