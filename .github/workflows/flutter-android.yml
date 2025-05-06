@@ -1,0 +1,37 @@
+# File: .github/workflows/flutter-android.yml
+# Purpose: CI workflow to build APK for MidRange OpsHub
+# ───────────────────────────────────────────────────────────────────────────
+# CHANGELOG:
+# [2025-05-06] Initial CI setup to build and archive APK on every push.
+
+name: Build Flutter APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: MidRangeOpsHub-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk

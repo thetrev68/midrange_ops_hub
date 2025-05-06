@@ -1,8 +1,0 @@
-# File: .packages
-# Purpose: Maps Dart imports to package locations (auto-managed by pub)
-# ───────────────────────────────────────────────────────────────────────────
-# CHANGELOG:
-# [2025-05-06] Initial snapshot for dev diagnostics.
-
-flutter:file:///C:/src/flutter/packages/flutter/lib/
-cupertino_icons:file:///C:/Users/ClarkTF/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.2/lib/
