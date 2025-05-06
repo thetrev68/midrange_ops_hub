@@ -31,7 +31,7 @@ jobs:
         run: flutter build apk --debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v3  # ✅ Use major version instead of v3.1.3
         with:
           name: MidRangeOpsHub-debug-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
