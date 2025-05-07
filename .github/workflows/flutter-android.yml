@@ -8,30 +8,37 @@
 # [2025-05-07] 🛠 Final fix: Removed working-directory to build from repo root.
 # [2025-05-07] 🧠 Added Gradle cache steps to optimize CI performance.
 # [2025-05-07] 📦 Enabled verbose build logging for better error diagnosis.
+# [2025-05-07] 🧯 FINAL FIX: Explicitly set checkout path + matching working-directory to stop CI nesting.
 
 name: Build Flutter APK
 
 on:
   push:
-    branches: [ main ]  # Trigger on push to main
-  workflow_dispatch:     # Allow manual triggering in GitHub UI
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # GitHub-hosted Linux environment
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: midrange_ops_hub  # 👈 Match the actual code location
 
     steps:
-      # Step 1: Checkout code from the repo into the default root directory
+      # Step 1: Checkout source into subfolder to control path
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          path: midrange_ops_hub  # 👈 Clean subfolder to avoid GitHub's default nesting
 
-      # Step 2: Install Flutter SDK (version must match your local dev env)
+      # Step 2: Set up Flutter SDK
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
 
-      # Step 3: Optional sanity check to make sure Android folder is intact
+      # Step 3: Verify AndroidManifest.xml exists
       - name: Check for AndroidManifest.xml
         run: |
           if [ ! -f android/app/src/main/AndroidManifest.xml ]; then
@@ -39,11 +46,11 @@ jobs:
             exit 1
           fi
 
-      # Step 4: Print Flutter environment for debugging
+      # Step 4: Print debug info
       - name: Run flutter doctor
         run: flutter doctor -v
 
-      # Step 5: Cache Gradle dependencies to speed up CI builds
+      # Step 5: Cache Gradle dependencies
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -54,15 +61,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle
 
-      # Step 6: Get Flutter packages (like pubspec.yaml dependencies)
+      # Step 6: Install Dart/Flutter packages
       - name: Install dependencies
         run: flutter pub get
 
-      # Step 7: Build the APK in debug mode with verbose logging
+      # Step 7: Build APK in debug mode
       - name: Build APK
         run: flutter build apk --debug --verbose
 
-      # Step 8: Upload built APK as an artifact to download from GitHub
+      # Step 8: Upload the APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
