@@ -14,7 +14,7 @@
 # [2025-05-07] 🚀 Tried checkout path 'midrange_ops_hub' with matching working-directory.
 # [2025-05-07] 🔍 Simplified to non-nested checkout with path '.' and working-directory '.'.
 # [2025-05-07] 📜 Refined debugging, confirmed build.gradle.kts compatibility.
-# [2025-05-07] ✅ Fixed nesting by setting working-directory to account for runner's default repo nesting.
+# [2025-05-07] ✅ Bypassed runner nesting with custom checkout path.
 
 name: Build Flutter APK
 
@@ -31,7 +31,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
         with:
-          path: . # Clone into /home/runner/work/midrange_ops_hub/midrange_ops_hub/
+          path: repo # Clone into /home/runner/work/midrange_ops_hub/repo/
 
       - name: Debug directory structure
         run: |
@@ -45,7 +45,7 @@ jobs:
           find . -name MainActivity.kt
           echo "Locating build.gradle.kts:"
           find . -name build.gradle.kts
-        working-directory: .
+        working-directory: repo
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -60,7 +60,7 @@ jobs:
           channel: 'stable'
 
       - name: Check for AndroidManifest.xml
-        working-directory: midrange_ops_hub
+        working-directory: repo
         run: |
           if [ ! -f android/app/src/main/AndroidManifest.xml ]; then
             echo "::error file=android/app/src/main/AndroidManifest.xml::Missing AndroidManifest.xml. Ensure android/ folder is committed."
@@ -68,11 +68,11 @@ jobs:
           fi
 
       - name: Run flutter doctor
-        working-directory: midrange_ops_hub
+        working-directory: repo
         run: flutter doctor -v
 
       - name: Accept Android SDK Licenses
-        working-directory: midrange_ops_hub
+        working-directory: repo
         run: yes | flutter doctor --android-licenses
 
       - name: Cache Gradle
@@ -81,24 +81,24 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('midrange_ops_hub/**/*.gradle*', 'midrange_ops_hub/**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('repo/**/*.gradle*', 'repo/**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle
 
       - name: Clean project
-        working-directory: midrange_ops_hub
+        working-directory: repo
         run: flutter clean
 
       - name: Install dependencies
-        working-directory: midrange_ops_hub
+        working-directory: repo
         run: flutter pub get
 
       - name: Build APK
-        working-directory: midrange_ops_hub
+        working-directory: repo
         run: flutter build apk --debug --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
-          path: midrange_ops_hub/build/app/outputs/flutter-apk/app-debug.apk
+          path: repo/build/app/outputs/flutter-apk/app-debug.apk
