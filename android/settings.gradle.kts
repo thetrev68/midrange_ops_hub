@@ -1,3 +1,9 @@
+// File: android/settings.gradle.kts
+// Purpose: Configure plugin management, Flutter includeBuild, and repo resolution
+// ----------------------------------------------------------------------------------
+// CHANGELOG:
+// [2025-05-07] 🧠 Merged Flutter-specific includeBuild and plugin setup into fixed settings layout.
+
 pluginManagement {
     val flutterSdkPath = run {
         val properties = java.util.Properties()
@@ -7,6 +13,7 @@ pluginManagement {
         flutterSdkPath
     }
 
+    // 👇 Required to include Flutter's Gradle tools
     includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
 
     repositories {
@@ -16,10 +23,14 @@ pluginManagement {
     }
 }
 
-plugins {
-    id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "8.7.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.8.22" apply false
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
+// 👇 Project metadata and modules
+rootProject.name = "midrange_ops_hub"
 include(":app")
