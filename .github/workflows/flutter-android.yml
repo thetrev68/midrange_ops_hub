@@ -14,6 +14,7 @@
 # [2025-05-07] 🚀 Tried checkout path 'midrange_ops_hub' with matching working-directory.
 # [2025-05-07] 🔍 Simplified to non-nested checkout with path '.' and working-directory '.'.
 # [2025-05-07] 📜 Refined debugging, confirmed build.gradle.kts compatibility.
+# [2025-05-07] ✅ Fixed nesting by setting working-directory to account for runner's default repo nesting.
 
 name: Build Flutter APK
 
@@ -30,7 +31,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
         with:
-          path: . # Clone directly into /home/runner/work/midrange_ops_hub/
+          path: . # Clone into /home/runner/work/midrange_ops_hub/midrange_ops_hub/
 
       - name: Debug directory structure
         run: |
@@ -59,7 +60,7 @@ jobs:
           channel: 'stable'
 
       - name: Check for AndroidManifest.xml
-        working-directory: .
+        working-directory: midrange_ops_hub
         run: |
           if [ ! -f android/app/src/main/AndroidManifest.xml ]; then
             echo "::error file=android/app/src/main/AndroidManifest.xml::Missing AndroidManifest.xml. Ensure android/ folder is committed."
@@ -67,11 +68,11 @@ jobs:
           fi
 
       - name: Run flutter doctor
-        working-directory: .
+        working-directory: midrange_ops_hub
         run: flutter doctor -v
 
       - name: Accept Android SDK Licenses
-        working-directory: .
+        working-directory: midrange_ops_hub
         run: yes | flutter doctor --android-licenses
 
       - name: Cache Gradle
@@ -80,24 +81,24 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('midrange_ops_hub/**/*.gradle*', 'midrange_ops_hub/**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle
 
       - name: Clean project
-        working-directory: .
+        working-directory: midrange_ops_hub
         run: flutter clean
 
       - name: Install dependencies
-        working-directory: .
+        working-directory: midrange_ops_hub
         run: flutter pub get
 
       - name: Build APK
-        working-directory: .
+        working-directory: midrange_ops_hub
         run: flutter build apk --debug --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: midrange_ops_hub/build/app/outputs/flutter-apk/app-debug.apk
