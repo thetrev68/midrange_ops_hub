@@ -1,3 +1,9 @@
+# File: .gitignore
+# Purpose: Define untracked files for Flutter project
+# ----------------------------------------------------------------------------------
+# CHANGELOG:
+# [2025-05-07] ✏️ Commented out Gradle wrapper ignores to allow CI builds via GitHub Actions.
+
 # Flutter & Dart
 build/
 .dart_tool/
@@ -18,10 +24,9 @@ android/.gradle/
 .gradle
 .cxx/
 local.properties
-GeneratedPluginRegistrant.java
-gradle-wrapper.jar
-/gradlew
-/gradlew.bat
+# gradle-wrapper.jar            # ⬅️ Allow gradle wrapper jar
+# /gradlew                     # ⬅️ Allow gradlew script
+# /gradlew.bat                 # ⬅️ Allow Windows gradlew script
 /captures/
 
 # Keystore & signing
