@@ -1,17 +1,12 @@
 # File: .github/workflows/flutter-android.yml
-# Purpose: Uses raw Gradle call to bypass Flutter wrapper and diagnose CI failures
+# Purpose: Clean Gradle-based build from repo root, fixing runner nesting issues.
 # ----------------------------------------------------------------------------------
 # CHANGELOG:
 # [2025-05-06] Initial build attempts.
-# [2025-05-06] Removed custom checkout path to avoid double-folder nesting.
-# [2025-05-06] Set working-directory to midrange_ops_hub (later determined incorrect).
-# [2025-05-07] ✅ Reset: no checkout path, no working-directory override — runs from root.
-# [2025-05-07] 🛠 Final fix: Removed working-directory to build from repo root.
-# [2025-05-07] 🧠 Added Gradle cache steps to optimize CI performance.
-# [2025-05-07] 📦 Enabled verbose build logging for better error diagnosis.
-# [2025-05-07] 🔧 Added Java setup and flutter clean steps for build reliability.
-# [2025-05-07] ✅ Flattened checkout structure using `path: .` to avoid runner nesting.
-# [2025-05-07] 💥 Switched to raw Gradle build using ./gradlew for better control and logging.
+# [2025-05-07] 🧹 Removed working-directory nesting, normalized checkout.
+# [2025-05-07] 🚫 Renamed job from `build` to `apk_build` to avoid repo-name conflict.
+# [2025-05-07] 🪛 Added fallback directory correction logic.
+# [2025-05-07] 🧪 Gradle call only, skipping Flutter wrapper, for low-level diagnostics.
 
 name: Build Flutter APK via Gradle
 
@@ -21,22 +16,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  apk_build: # Important: not named 'build' to avoid path nesting
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-        with:
-          path: .
 
-      - name: Show directory structure
+      - name: Ensure build runs from repo root (defensive fix)
         run: |
-          echo "📁 Root:"
-          pwd
+          echo "👣 Starting path: $(pwd)"
+          if [ -d "midrange_ops_hub/android" ]; then
+            echo "🛠 Moving project files from nested folder..."
+            mv midrange_ops_hub/* . || true
+            mv midrange_ops_hub/.* . || true
+          fi
           ls -al
-          echo "📁 android/ folder:"
-          ls -al android
 
       - name: Set up Java
         uses: actions/setup-java@v3
