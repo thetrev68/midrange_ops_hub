@@ -7,6 +7,7 @@
 // [2025-05-07] 🛠 Added manifestPlaceholders to define applicationName used in AndroidManifest.xml.
 // [2025-05-07] 🧽 Cleaned up comments for clarity.
 // [2025-05-07] ⬆️ Upgraded JVM and Kotlin target compatibility to Java 17.
+// [2025-05-07] 🩹 Delayed use of `flutter.*` values until after plugin evaluation.
 
 plugins {
     id("com.android.application")
@@ -16,8 +17,6 @@ plugins {
 
 android {
     namespace = "com.example.midrange_ops_hub"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -30,10 +29,12 @@ android {
 
     defaultConfig {
         applicationId = "com.example.midrange_ops_hub"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+
+        // 👇 Safe placeholder values — will be overridden later
+        minSdk = 21
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
 
         manifestPlaceholders += mapOf(
             "applicationName" to "android.app.Application"
@@ -42,8 +43,21 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug") // Temporary default
+            signingConfig = signingConfigs.getByName("debug")
         }
+    }
+}
+
+// 👇 Safely assign flutter.* values after plugin setup
+afterEvaluate {
+    android.compileSdk = flutter.compileSdkVersion
+    android.ndkVersion = flutter.ndkVersion
+
+    android.defaultConfig.apply {
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 }
 
