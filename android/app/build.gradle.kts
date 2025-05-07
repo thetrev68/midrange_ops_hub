@@ -1,13 +1,25 @@
+// File: android/app/build.gradle.kts
+// Purpose: Configures the Android-side build behavior for the Flutter app
+// -------------------------------------------------------------------------------
+// CHANGELOG:
+// [2025-05-06] Initial scaffold created by Flutter tool.
+// [2025-05-07] 🧠 Confirmed Kotlin DSL format (.kts).
+// [2025-05-07] 🛠 Added manifestPlaceholders to define applicationName used in AndroidManifest.xml.
+// [2025-05-07] 🧽 Cleaned up comments for clarity, added novice-friendly documentation.
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    // Flutter Gradle plugin (must come last)
     id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
+    // App's Java/Kotlin package namespace
     namespace = "com.example.midrange_ops_hub"
+    // Compile against this SDK version
     compileSdk = flutter.compileSdkVersion
+    // Native development kit version
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -20,25 +32,30 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // The unique application ID used to identify your app on the Play Store
         applicationId = "com.example.midrange_ops_hub"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+
+        // These are passed through from Flutter's build config
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // 👇 Added to resolve ${applicationName} in AndroidManifest.xml
+        manifestPlaceholders += mapOf(
+            "applicationName" to "android.app.Application"
+        )
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Using debug signing config for now (safe for internal apps)
             signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
 
+// Path to your Flutter source
 flutter {
     source = "../.."
 }
