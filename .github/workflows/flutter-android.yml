@@ -9,8 +9,11 @@
 # [2025-05-07] 🧠 Added Gradle cache steps to optimize CI performance.
 # [2025-05-07] 📦 Enabled verbose build logging for better error diagnosis.
 # [2025-05-07] 🔧 Added Java setup and flutter clean steps for build reliability.
-# [2025-05-07] 🧯 FINAL FIX: Explicitly set checkout path + matching working-directory to stop CI nesting.
-# [2025-05-07] 🔁 Reset to clean root context — no path, no working-dir, no nesting.
+# [2025-05-07] 🧯 Attempted explicit checkout path + matching working-directory.
+# [2025-05-07] 🔁 Reset to clean root context — no path, no working-dir.
+# [2025-05-07] 🚀 Tried checkout path 'midrange_ops_hub' with matching working-directory.
+# [2025-05-07] 🔍 Simplified to non-nested checkout with path '.' and working-directory '.'.
+# [2025-05-07] 📜 Refined debugging, confirmed build.gradle.kts compatibility.
 
 name: Build Flutter APK
 
@@ -26,6 +29,22 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          path: . # Clone directly into /home/runner/work/midrange_ops_hub/
+
+      - name: Debug directory structure
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Repository structure:"
+          ls -R
+          echo "Locating AndroidManifest.xml:"
+          find . -name AndroidManifest.xml
+          echo "Locating MainActivity.kt:"
+          find . -name MainActivity.kt
+          echo "Locating build.gradle.kts:"
+          find . -name build.gradle.kts
+        working-directory: .
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -37,8 +56,10 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
+          channel: 'stable'
 
       - name: Check for AndroidManifest.xml
+        working-directory: .
         run: |
           if [ ! -f android/app/src/main/AndroidManifest.xml ]; then
             echo "::error file=android/app/src/main/AndroidManifest.xml::Missing AndroidManifest.xml. Ensure android/ folder is committed."
@@ -46,7 +67,12 @@ jobs:
           fi
 
       - name: Run flutter doctor
+        working-directory: .
         run: flutter doctor -v
+
+      - name: Accept Android SDK Licenses
+        working-directory: .
+        run: yes | flutter doctor --android-licenses
 
       - name: Cache Gradle
         uses: actions/cache@v3
@@ -59,12 +85,15 @@ jobs:
             ${{ runner.os }}-gradle
 
       - name: Clean project
+        working-directory: .
         run: flutter clean
 
       - name: Install dependencies
+        working-directory: .
         run: flutter pub get
 
       - name: Build APK
+        working-directory: .
         run: flutter build apk --debug --verbose
 
       - name: Upload APK
