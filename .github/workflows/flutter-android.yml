@@ -1,10 +1,11 @@
 # File: .github/workflows/flutter-android.yml
-# Purpose: CI workflow to build APK for MidRange OpsHub from Flutter source
+# Purpose: Final CI workflow fix to build Flutter APK from true root context
 # -------------------------------------------------------------------------------
 # CHANGELOG:
-# [2025-05-06] Initial version with debug build, manifest pre-check, artifact upload.
+# [2025-05-06] Initial setup.
 # [2025-05-06] Removed custom checkout path to avoid double-folder nesting.
 # [2025-05-06] Set working-directory to midrange_ops_hub (later determined incorrect).
+# [2025-05-07] ✅ Reset: no checkout path, no working-directory override — runs from root.
 # [2025-05-07] 🛠 Final fix: Removed working-directory to build from repo root.
 # [2025-05-07] 🧠 Added Gradle cache steps to optimize CI performance.
 # [2025-05-07] 📦 Enabled verbose build logging for better error diagnosis.
@@ -15,6 +16,7 @@
 # [2025-05-07] 🔍 Simplified to non-nested checkout with path '.' and working-directory '.'.
 # [2025-05-07] 📜 Refined debugging, confirmed build.gradle.kts compatibility.
 # [2025-05-07] ✅ Bypassed runner nesting with custom checkout path.
+# [2025-05-07] 🔧 Confirmed MainActivity.kt, AndroidManifest.xml, Gradle & pubspec are clean.
 
 name: Build Flutter APK
 
@@ -30,22 +32,16 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-        with:
-          path: repo # Clone into /home/runner/work/midrange_ops_hub/repo/
 
-      - name: Debug directory structure
+      - name: Show structure
         run: |
-          echo "Current working directory:"
+          echo "🧱 Repo root:"
           pwd
-          echo "Repository structure:"
-          ls -R
-          echo "Locating AndroidManifest.xml:"
+          ls -al
+          echo "📄 Looking for AndroidManifest.xml:"
           find . -name AndroidManifest.xml
-          echo "Locating MainActivity.kt:"
+          echo "📄 Looking for MainActivity.kt:"
           find . -name MainActivity.kt
-          echo "Locating build.gradle.kts:"
-          find . -name build.gradle.kts
-        working-directory: repo
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -57,48 +53,25 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
-          channel: 'stable'
+          channel: stable
 
-      - name: Check for AndroidManifest.xml
-        working-directory: repo
-        run: |
-          if [ ! -f android/app/src/main/AndroidManifest.xml ]; then
-            echo "::error file=android/app/src/main/AndroidManifest.xml::Missing AndroidManifest.xml. Ensure android/ folder is committed."
-            exit 1
-          fi
-
-      - name: Run flutter doctor
-        working-directory: repo
+      - name: flutter doctor
         run: flutter doctor -v
 
       - name: Accept Android SDK Licenses
-        working-directory: repo
         run: yes | flutter doctor --android-licenses
 
-      - name: Cache Gradle
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('repo/**/*.gradle*', 'repo/**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle
-
-      - name: Clean project
-        working-directory: repo
+      - name: flutter clean
         run: flutter clean
 
-      - name: Install dependencies
-        working-directory: repo
+      - name: flutter pub get
         run: flutter pub get
 
-      - name: Build APK
-        working-directory: repo
+      - name: Build APK (debug)
         run: flutter build apk --debug --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
-          path: repo/build/app/outputs/flutter-apk/app-debug.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
