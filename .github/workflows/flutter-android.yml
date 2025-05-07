@@ -1,8 +1,8 @@
 # File: .github/workflows/flutter-android.yml
-# Purpose: Final CI workflow fix to build Flutter APK from true root context
-# -------------------------------------------------------------------------------
+# Purpose: Uses raw Gradle call to bypass Flutter wrapper and diagnose CI failures
+# ----------------------------------------------------------------------------------
 # CHANGELOG:
-# [2025-05-06] Initial setup.
+# [2025-05-06] Initial build attempts.
 # [2025-05-06] Removed custom checkout path to avoid double-folder nesting.
 # [2025-05-06] Set working-directory to midrange_ops_hub (later determined incorrect).
 # [2025-05-07] ✅ Reset: no checkout path, no working-directory override — runs from root.
@@ -17,8 +17,9 @@
 # [2025-05-07] 📜 Refined debugging, confirmed build.gradle.kts compatibility.
 # [2025-05-07] ✅ Bypassed runner nesting with custom checkout path.
 # [2025-05-07] 🔧 Confirmed MainActivity.kt, AndroidManifest.xml, Gradle & pubspec are clean.
+# [2025-05-07] 💥 Switched to raw Gradle build using ./gradlew for better control and logging.
 
-name: Build Flutter APK
+name: Build Flutter APK via Gradle
 
 on:
   push:
@@ -33,15 +34,13 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
 
-      - name: Show structure
+      - name: Show directory structure
         run: |
-          echo "🧱 Repo root:"
+          echo "📁 Root:"
           pwd
           ls -al
-          echo "📄 Looking for AndroidManifest.xml:"
-          find . -name AndroidManifest.xml
-          echo "📄 Looking for MainActivity.kt:"
-          find . -name MainActivity.kt
+          echo "📁 android/:"
+          ls -al android
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -53,7 +52,6 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
-          channel: stable
 
       - name: flutter doctor
         run: flutter doctor -v
@@ -61,17 +59,20 @@ jobs:
       - name: Accept Android SDK Licenses
         run: yes | flutter doctor --android-licenses
 
-      - name: flutter clean
+      - name: Clean build folders
         run: flutter clean
 
-      - name: flutter pub get
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Build APK (debug)
-        run: flutter build apk --debug --verbose
+      - name: Run Gradle Build (debug)
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --stacktrace --info
 
-      - name: Upload APK
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
