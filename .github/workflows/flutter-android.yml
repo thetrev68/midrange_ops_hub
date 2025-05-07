@@ -7,6 +7,7 @@
 # [2025-05-07] 🚫 Renamed job from `build` to `apk_build` to avoid repo-name conflict.
 # [2025-05-07] 🪛 Added fallback directory correction logic.
 # [2025-05-07] 🧪 Gradle call only, skipping Flutter wrapper, for low-level diagnostics.
+# [2025-05-07] 🧯 Added --warning-mode all to show Gradle deprecation warnings.
 
 name: Build Flutter APK via Gradle
 
@@ -16,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  apk_build: # Important: not named 'build' to avoid path nesting
+  apk_build:
     runs-on: ubuntu-latest
 
     steps:
@@ -60,7 +61,7 @@ jobs:
         run: |
           cd android
           chmod +x ./gradlew
-          ./gradlew assembleDebug --stacktrace --info
+          ./gradlew assembleDebug --stacktrace --info --warning-mode all
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
