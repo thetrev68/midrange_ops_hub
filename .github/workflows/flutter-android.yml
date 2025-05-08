@@ -12,6 +12,7 @@
 # [2025-05-08] 🛠 Switched to actions/setup-gradle to bypass SSLContext errors on runner
 # [2025-05-08] 🩹 Added chmod step to fix 'Permission denied' error on Linux runner
 # [2025-05-08] 🧼 Replaced ./gradlew with system-installed gradle to prevent SSLContext fetch errors
+# [2025-05-08] 🧹 Removed unnecessary repo folder nesting logic in CI setup
 
 name: Build Flutter APK via Gradle
 
