@@ -16,6 +16,7 @@
 # [2025-05-08] 🧰 Reduced Gradle log verbosity in CI to focus on errors and warnings
 # [2025-05-08] 📦 Dynamically locate and upload debug APK to avoid hardcoded path issues
 # [2025-05-08] 🔎 Refined APK search path to use known debug output location
+# [2025-05-08] 🧪 Refined APK location logic using GitHub Actions output to avoid path eval errors
 
 name: Build Flutter APK via Gradle
 
@@ -66,10 +67,11 @@ jobs:
           gradle clean assembleDebug --stacktrace --warning-mode summary
 
       - name: Locate Debug APK
-        run: find build/app/outputs -type f -name "app-debug.apk" > apk_path.txt
+        id: locate_apk
+        run: echo "apk_path=$(find build/app/outputs -type f -name 'app-debug.apk')" >> $GITHUB_OUTPUT
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
-          path: $(cat apk_path.txt)
+          path: ${{ steps.locate_apk.outputs.apk_path }}
