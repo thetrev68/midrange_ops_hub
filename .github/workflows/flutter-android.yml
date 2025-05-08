@@ -1,7 +1,7 @@
 # File: .github/workflows/flutter-android.yml
 # Purpose: CI pipeline to build Android APK via Gradle in Flutter project
 # ----------------------------------------------------------------------------------
-# CHANGELOG:
+# [2025-05-08] 🛠 Corrected APK upload path to match actual Gradle output directory
 # [2025-05-08] 🧹 Replaced dynamic APK path logic with static upload path to avoid env parsing issues
 # [2025-05-08] 🪄 Switched APK path passing to use GITHUB_ENV for safe multiline compatibility
 # [2025-05-08] 🧪 Refined APK location logic using GitHub Actions output to avoid path eval errors
@@ -72,4 +72,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
-          path: android/app/build/outputs/flutter-apk/app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
