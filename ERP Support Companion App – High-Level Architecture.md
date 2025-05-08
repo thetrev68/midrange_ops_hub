@@ -5,6 +5,27 @@ A mobile-first internal app to streamline ERP support workflows across teams. In
 
 ---
 
+## 🧰 Local Development Environment
+
+- **Java SDK**: Java 21 (Temurin preferred)
+- **Flutter SDK**: Stable channel
+- **Android SDK/NDK**:
+  - Build Tools: 34.0.0
+  - NDK: 29.0.13113456
+  - CMake: 3.22.1 (auto-installed)
+- **Gradle**: Wrapper-provided (8.14)
+- **Project Language**: Kotlin DSL (`build.gradle.kts`)
+- **VS Code**:
+  - Required plugin: Gradle for Java
+  - `.vscode/settings.json` sets `java.home` for Gradle compatibility
+- **Local Properties**:
+  - Required file: `android/local.properties`
+  - Must include: `flutter.sdk=/your/path/to/flutter`
+
+See `SETUP.md` for complete environment setup instructions.
+
+---
+
 ## 🧱 Architecture Components
 
 ### 1. Mobile App (Frontend)

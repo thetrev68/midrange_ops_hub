@@ -1,5 +1,5 @@
 # File: .github/workflows/flutter-android.yml
-# Purpose: Clean Gradle-based build from repo root, fixing runner nesting issues.
+# Purpose: CI pipeline to build Android APK via Gradle in Flutter project
 # ----------------------------------------------------------------------------------
 # CHANGELOG:
 # [2025-05-06] Initial build attempts.
@@ -8,6 +8,7 @@
 # [2025-05-07] 🪛 Added fallback directory correction logic.
 # [2025-05-07] 🧪 Gradle call only, skipping Flutter wrapper, for low-level diagnostics.
 # [2025-05-07] 🧯 Added --warning-mode all to show Gradle deprecation warnings.
+# [2025-05-08] ✅ Confirmed working after local Gradle DSL cleanup; minor optimizations applied.
 
 name: Build Flutter APK via Gradle
 
@@ -51,19 +52,16 @@ jobs:
       - name: Accept Android SDK Licenses
         run: yes | flutter doctor --android-licenses
 
-      - name: Clean build folders
-        run: flutter clean
-
-      - name: Install dependencies
+      - name: Install Flutter dependencies
         run: flutter pub get
 
-      - name: Run Gradle Build (debug)
+      - name: Assemble Debug APK with Gradle
         run: |
           cd android
           chmod +x ./gradlew
-          ./gradlew assembleDebug --stacktrace --info --warning-mode all
+          ./gradlew clean assembleDebug --stacktrace --info --warning-mode all
 
-      - name: Upload Debug APK
+      - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
