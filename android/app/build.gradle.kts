@@ -14,6 +14,7 @@
 // [2025-05-08] 🔍 Added debug println to confirm app module is evaluated
 // [2025-05-08] 🧱 Added google() and mavenCentral() repositories for runtime resolution
 // [2025-05-08] 🧬 Updated namespace and applicationId to match Kotlin package 'com.example.midrangeopshub'.
+// [2025-05-08] 🧱 Replaced flutter.* values in defaultConfig with hardcoded values for CI compatibility
 
 println("✅ android/app/build.gradle.kts has been loaded")
 
@@ -42,11 +43,11 @@ android {
     defaultConfig {
         applicationId = "com.example.midrangeopshub"
 
-        // ✅ Use Flutter-injected values early to prevent sync-time errors
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        // ✅ Hardcoded for CI compatibility
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
 
         manifestPlaceholders += mapOf(
             "applicationName" to "android.app.Application"
