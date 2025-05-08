@@ -14,6 +14,7 @@
 # [2025-05-08] 🧼 Replaced ./gradlew with system-installed gradle to prevent SSLContext fetch errors
 # [2025-05-08] 🧹 Removed unnecessary repo folder nesting logic in CI setup
 # [2025-05-08] 🧰 Reduced Gradle log verbosity in CI to focus on errors and warnings
+# [2025-05-08] 📦 Dynamically locate and upload debug APK to avoid hardcoded path issues
 
 name: Build Flutter APK via Gradle
 
@@ -63,8 +64,11 @@ jobs:
           cd android
           gradle clean assembleDebug --stacktrace --warning-mode summary
 
+      - name: Locate Debug APK
+        run: find android/app/build -type f -name "*.apk" > apk_path.txt
+
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MidRangeOpsHub-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: $(cat apk_path.txt)
