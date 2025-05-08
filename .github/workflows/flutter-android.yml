@@ -9,6 +9,7 @@
 # [2025-05-07] 🧪 Gradle call only, skipping Flutter wrapper, for low-level diagnostics.
 # [2025-05-07] 🧯 Added --warning-mode all to show Gradle deprecation warnings.
 # [2025-05-08] ✅ Confirmed working after local Gradle DSL cleanup; minor optimizations applied.
+# [2025-05-08] 🛠 Switched to actions/setup-gradle to bypass SSLContext errors on runner
 
 name: Build Flutter APK via Gradle
 
@@ -55,10 +56,12 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Assemble Debug APK with Gradle
         run: |
           cd android
-          chmod +x ./gradlew
           ./gradlew clean assembleDebug --stacktrace --info --warning-mode all
 
       - name: Upload Debug APK Artifact
