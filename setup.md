@@ -58,3 +58,14 @@ This guide ensures cross-machine consistency for Android + Flutter development.
 - `gradle/wrapper/gradle-wrapper.properties`
 
 > ✅ Confirm these are committed to ensure consistent build behavior.
+
+## 🧪 CI Notes
+
+- APK builds are validated in `.github/workflows/flutter-android.yml`.
+- Output APK path must match: `build/app/outputs/apk/debug/app-debug.apk`
+- GitHub Actions uses:
+  - Java 17 (Zulu)
+  - Gradle 8.14 via `setup-gradle`
+  - Flutter 3.19.0
+- No `org.gradle.java.home` should be committed — it's handled per-runner.
+- Static paths preferred over dynamic `find` to avoid quoting issues.

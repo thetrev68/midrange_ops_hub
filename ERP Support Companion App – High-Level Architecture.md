@@ -86,6 +86,28 @@ See `SETUP.md` for complete environment setup instructions.
 
 ---
 
+## 📂 Ticket Management Structure
+
+The app supports both internal support queues and DevOps Jira projects:
+
+### 1. Support Tickets
+- **Source**: Jira Service Project (Help Desk)
+- **Split by team**: e.g., Team A and Team B
+- **UI**: `SupportTicketsScreen` with tabbed layout for team views
+- **Usage**: Tracks incoming user-submitted support requests
+
+### 2. DevOps Tickets
+- **Source**: Jira Software Projects (Kanban)
+- **Project Keys**:
+  - `CSSDO`: Core ERP/Systems DevOps
+  - `CAPSE`: Process Automation Engineering
+- **UI**: `DevOpsTicketsScreen(projectKey: ...)`
+- **Usage**: View active work in engineering pipelines by team
+
+**Accessed Via**: Main hub `TicketsScreen` with routes to each queue
+
+---
+
 ## 🚀 DevOps & Deployment
 
 - **Hosting**:
