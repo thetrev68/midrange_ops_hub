@@ -3,14 +3,21 @@
 // ───────────────────────────────────────────────────────────────────────────
 // CHANGELOG:
 // [2025-05-06] Added navigation to TicketsScreen, KbScreen, EnvStatusScreen, and ChangeRequestsScreen.
+// [2025-05-08] Updated app title and logo, added feature tiles for each screen.
+// [2025-05-08] Integrated dotenv for environment variable management, added error handling for navigation.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/tickets_screen.dart';
 import 'screens/kb_screen.dart';
 import 'screens/env_status_screen.dart';
 import 'screens/change_requests_screen.dart';
 
-void main() => runApp(const MidRangeOpsHubApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  runApp(const MidRangeOpsHubApp());
+}
 
 class MidRangeOpsHubApp extends StatelessWidget {
   const MidRangeOpsHubApp({super.key});

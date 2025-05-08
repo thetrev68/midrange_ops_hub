@@ -3,12 +3,15 @@
 # ----------------------------------------------------------------------------------
 # CHANGELOG:
 # [2025-05-07] ✏️ Commented out gradlew-related ignore rules to ensure Gradle wrapper scripts are committed.
+# [2025-05-08] ✏️ added .env to ignore list.
+
 
 # Miscellaneous
 *.class
 *.log
 *.pyc
 *.swp
+.env
 .DS_Store
 .atom/
 .build/
