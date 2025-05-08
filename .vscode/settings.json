@@ -1,0 +1,13 @@
+// File: .vscode/settings.json
+// Purpose: Ensures VS Code uses correct Java runtime for Android Gradle sync
+// -------------------------------------------------------------------------------
+// CHANGELOG:
+// [2025-05-08] ✅ Added java.home to fix Gradle sync error caused by default Java 8.
+
+{
+    // Allows VS Code to prompt before auto-configuring Java project settings
+    "java.configuration.updateBuildConfiguration": "automatic",
+
+    // ✅ Ensures Gradle and Java tooling in VS Code use Java 21
+    "java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.7.6-hotspot"
+}

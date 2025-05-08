@@ -4,7 +4,7 @@
      [2025-05-06] Initial scaffold from flutter create . with v2 embedding confirmed.
      [2025-05-06] Fixed android:name to reference .MainActivity instead of FlutterActivity directly.
      [2025-05-07] Removed package from <manifest... to avoid namespace conflict.
--->
+     [2025-05-08] 🔁 Updated android:name to fully-qualified class name matching MainActivity.kt -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -15,7 +15,7 @@
 
         <!-- Main launcher activity that initializes Flutter engine -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.midrangeopshub.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
