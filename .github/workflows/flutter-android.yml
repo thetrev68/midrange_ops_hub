@@ -15,6 +15,7 @@
 # [2025-05-08] 🧹 Removed unnecessary repo folder nesting logic in CI setup
 # [2025-05-08] 🧰 Reduced Gradle log verbosity in CI to focus on errors and warnings
 # [2025-05-08] 📦 Dynamically locate and upload debug APK to avoid hardcoded path issues
+# [2025-05-08] 🔎 Refined APK search path to use known debug output location
 
 name: Build Flutter APK via Gradle
 
@@ -65,7 +66,7 @@ jobs:
           gradle clean assembleDebug --stacktrace --warning-mode summary
 
       - name: Locate Debug APK
-        run: find android/app/build -type f -name "*.apk" > apk_path.txt
+        run: find build/app/outputs -type f -name "app-debug.apk" > apk_path.txt
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
