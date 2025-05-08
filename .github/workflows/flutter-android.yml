@@ -13,6 +13,7 @@
 # [2025-05-08] 🩹 Added chmod step to fix 'Permission denied' error on Linux runner
 # [2025-05-08] 🧼 Replaced ./gradlew with system-installed gradle to prevent SSLContext fetch errors
 # [2025-05-08] 🧹 Removed unnecessary repo folder nesting logic in CI setup
+# [2025-05-08] 🧰 Reduced Gradle log verbosity in CI to focus on errors and warnings
 
 name: Build Flutter APK via Gradle
 
@@ -29,14 +30,9 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v3
 
-      - name: Ensure build runs from repo root (defensive fix)
+      - name: Confirm working directory
         run: |
-          echo "👣 Starting path: $(pwd)"
-          if [ -d "midrange_ops_hub/android" ]; then
-            echo "🛠 Moving project files from nested folder..."
-            mv midrange_ops_hub/* . || true
-            mv midrange_ops_hub/.* . || true
-          fi
+          echo "👣 Current directory: $(pwd)"
           ls -al
 
       - name: Set up Java
@@ -65,7 +61,7 @@ jobs:
       - name: Assemble Debug APK with Gradle
         run: |
           cd android
-          gradle clean assembleDebug --stacktrace --info --warning-mode all
+          gradle clean assembleDebug --stacktrace --warning-mode summary
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
