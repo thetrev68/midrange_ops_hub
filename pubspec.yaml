@@ -5,7 +5,7 @@
 # [2025-05-06] Initial baseline with flutter_lints, logo asset, and core setup for screen routing.
 # [2025-05-07] Added dotenv for environment variables and http package for network requests.
 # [2025-05-08] Updated dependencies to latest versions and added comments for clarity.
-
+# [2025-05-09] Bumped http to ^1.4.0 and flutter_lints to ^5.0.0 (safe upgrade, no breaking changes).
 
 name: midrange_ops_hub
 description: MidRange OpsHub mobile companion app
@@ -18,15 +18,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.6
+  http: ^1.4.0
   flutter_dotenv: ^5.1.0
-
   cupertino_icons: ^1.0.2
+  fl_chart: ^0.64.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

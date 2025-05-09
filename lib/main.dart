@@ -5,6 +5,7 @@
 // [2025-05-06] Added navigation to TicketsScreen, KbScreen, EnvStatusScreen, and ChangeRequestsScreen.
 // [2025-05-08] Updated app title and logo, added feature tiles for each screen.
 // [2025-05-08] Integrated dotenv for environment variable management, added error handling for navigation.
+// [2025-05-09] Modified main() so app doesn't crash if .env is missing
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,7 +16,13 @@ import 'screens/change_requests_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint('Warning: .env file not found or failed to load — proceeding with defaults.');
+  }
+
   runApp(const MidRangeOpsHubApp());
 }
 

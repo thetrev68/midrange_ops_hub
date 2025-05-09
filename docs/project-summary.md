@@ -1,17 +1,17 @@
 # 📋 MidRange OpsHub – Project Summary
 
-**Date:** May 6, 2025\
-**Author:** ChatGPT + Trevor\
+**Date:** May 9, 2025
+**Author:** ChatGPT + Trevor
 **Project Purpose:** Internal mobile support app for NOV | Enterprise Solutions | Mid-Range Solutions
 
 ---
 
 ## 🧭 Project Overview
 
-- Mobile-first Flutter app for internal ERP support workflows
-- Targets Infor, Sage, Epicor environments
-- Shared tools for support engineers and developers
-- Branded as **MidRange OpsHub**
+* Mobile-first Flutter app for internal ERP support workflows
+* Targets Infor, Sage, Epicor environments
+* Shared tools for support engineers and developers
+* Branded as **MidRange OpsHub**
 
 ---
 
@@ -19,136 +19,181 @@
 
 ### ✅ Screens Built:
 
-- **Tickets**
-  - Mocked Jira-style issue list
-- **Knowledge Base**
-  - ERP article list w/ summaries
-- **Environment Status**
-  - Health/status of Dev, QA, UAT, Prod
-- **Change Requests**
-  - List of mock change requests by ID and status
+* **Tickets**
+
+  * Jira-style issue queues
+  * Support + DevOps ticket views
+* **Knowledge Base**
+
+  * ERP article list w/ summaries and tags
+* **Environment Status**
+
+  * Health/status of Dev, QA, UAT, Prod
+* **Change Requests**
+
+  * Submission, approval, and history log
 
 ---
 
-### 🧱 App Structure:
+## 🧱 Updated App Structure
 
 ```
 lib/
-├── main.dart
+├── api/
+│   └── jira_service.dart
 ├── screens/
-│   ├── tickets_screen.dart
-│   ├── kb_screen.dart
+│   ├── change_requests_screen.dart
+│   ├── devops_tickets_screen.dart
 │   ├── env_status_screen.dart
-│   └── change_requests_screen.dart
-├── widgets/
-└── services/
+│   ├── home_screen.dart
+│   ├── kb_screen.dart
+│   ├── support_tickets_screen.dart
+│   └── tickets_screen.dart
+├── main.dart
 ```
 
 ---
 
-## 🧰 Project Configuration
+## 🧰 Local Development Environment
 
-### 🔧 Dart & Flutter
+* **Flutter SDK:** Stable (3.29.3)
+* **Java SDK:** Eclipse Temurin JDK 21
+* **Android SDK/NDK:**
 
-- SDK: Flutter stable 3.19.0
-- JDK: Eclipse Temurin (Adoptium) JDK 17
+  * Build Tools: 34.0.0
+  * NDK: 29.0.13113456
+  * CMake: 3.22.1
+* **Gradle:** Wrapper-provided (8.1+)
+* **Kotlin DSL:** Used for all Gradle config files (`.kts`)
+* **VS Code**:
 
-### 🧾 Key Files
+  * Required plugin: Gradle for Java
+  * `.vscode/settings.json` sets `java.home`
+* **Local Properties:**
 
-- `pubspec.yaml` – uses `flutter_lints`, includes NOV logo asset
-- `analysis_options.yaml` – follows project annotation/changelog conventions
-- `.metadata` – Flutter-generated, annotated
-- `.gitignore` – merged for Flutter + Android
-
----
-
-## 🔐 Cert & Network Workaround
-
-### 🧱 Problem (Local Only)
-
-Gradle downloads failed with: `PKIX path building failed: unable to find valid certification path`
-
-### 🛠 Fix Attempted
-
-- Exported root cert from Zscaler
-- Imported cert into: `C:\Program Files\Eclipse Adoptium\jdk-17.0.15.6-hotspot\lib\security\cacerts`
-- Set `JAVA_HOME` + updated `gradle.properties`
-
-```properties
-org.gradle.java.home=C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.15.6-hotspot
-```
-
-### 🚫 Result
-
-- Local build still failed—Gradle unable to fully bypass Zscaler
-- **CI Build intended to bypass this (Option A), but fails for different reasons**
+  * Required file: `android/local.properties`
+  * Must include `flutter.sdk` path
 
 ---
 
-## ✅ GitHub Actions: CI Build Setup
+## 🔐 Auth & Security
 
-### 🌐 Workflow Path
+* **Okta OAuth2/OIDC** planned for backend auth
+* **VPN (Zscaler)** required for most services
+* **Security Practices**:
 
-`.github/workflows/flutter-android.yml`
-
-### ✅ What it does:
-
-- Runs `flutter pub get` + `flutter build apk --debug`
-- Uploads `.apk` as an artifact
-
-### ✅ Actions Used
-
-- `subosito/flutter-action@v2`
-- `actions/upload-artifact@v4`  <!-- Updated to v4 to fix deprecated v3 issue -->
-
-### 🛡️ Sanity Check
-
-<!-- File: .github/workflows/flutter-android.yml -->
-<!-- CHANGELOG:
-     [2025-05-06] Added pre-check for AndroidManifest.xml to fail fast if missing.
-     [2025-05-06] Discovered manifest build failure due to Kotlin package path mismatch.
-     [2025-05-06] CI build fails despite v2 embedding due to project root misalignment or misconfiguration.
-     [2025-05-06] Added `flutter doctor -v` debug step to inspect environment during CI. -->
-
-```yaml
-- name: Check for AndroidManifest.xml
-  run: |
-    if [ ! -f android/app/src/main/AndroidManifest.xml ]; then
-      echo "::error file=android/app/src/main/AndroidManifest.xml::Missing AndroidManifest.xml. Ensure android/ folder is committed."
-      exit 1
-    fi
-
-- name: Run flutter doctor
-  run: flutter doctor -v
-```
-
-#### 📌 Notes:
-- The package name in `AndroidManifest.xml` (e.g., `com.example.midrangeopshub`) **must match** the Kotlin folder structure.
-- ✅ Folder corrected to `com/example/midrangeopshub/`
-- ❗ CI build still fails with v1 embedding warning — likely cause: **GitHub Actions is misaligned in its working directory or structure**
-- 🧪 `flutter doctor -v` output added to analyze runner's environment
+  * HTTPS-only endpoints
+  * Role-based access
+  * No secrets in mobile code or `.env`
 
 ---
 
-## 🚀 Next Steps
+## 🔄 Integrations
 
-- Validate project structure and CI root context
-- Confirm GitHub Actions build works + download `.apk`
-- Add detail views per screen
-- Connect real Jira data
-- Tag `v0.2.0` after first successful cloud build
-- Optional: Add release signing, Play Store deployment
+### Jira
+
+* **Service Project:** User support
+* **Software Projects:** CSSDO (ERP DevOps), CAPSE (Automation)
+* **Accessed via:** REST API + token
+
+### Knowledge Base
+
+* **Sources:** Confluence, Infor/Sage/Epicor vendor data
+* **Methods:** API, RSS, manual load
+* **Search:** Full-text w/ tag filters
+
+### Environments & Deploys
+
+* Manual UI updates for env health
+* Planned webhook support for auto-logging deploys
+
+---
+
+## 🧾 Key Files
+
+* `pubspec.yaml` – dependencies, logo asset, lints
+* `.env.example` – Jira settings (base URL, project keys)
+* `.gitignore` – Flutter + Android rules
+* `.github/workflows/flutter-android.yml` – CI config
+
+---
+
+## 🧪 Known Issues: Cert + CI
+
+### Local Build
+
+* ❌ Zscaler cert blocks Gradle downloads
+* ⚙️ Tried importing root cert into JDK keystore
+* ✅ Set `JAVA_HOME` + `gradle.properties`
+
+  ```
+  org.gradle.java.home=C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.15.6-hotspot
+  ```
+* 🚫 Still fails locally due to trust errors
+
+### CI Build (GitHub Actions)
+
+* ✅ Uses `flutter-action` + `upload-artifact`
+* ✅ Verifies `AndroidManifest.xml`
+* ⚠️ Build fails on v1 embedding or manifest mismatch
+* ✅ Kotlin folder structure corrected: `com/example/midrangeopshub/`
+* ✅ Added `flutter doctor -v` for debug
+
+---
+
+## 🚀 CI/CD & Deployment
+
+* **CI:** GitHub Actions
+* **Artifacts:** `.apk` upload after debug build
+* **Future:** Bitrise or Azure Pipelines
+* **Release Targets:**
+
+  * Android: MDM/APK
+  * iOS: TestFlight (post-signing)
+
+---
+
+## 📈 Future Enhancements
+
+* ✅ Jira integration via middleware
+* 🚀 Firebase Crashlytics + push notifications
+* 🔍 Analytics + usage reporting
+* 🔖 KB tagging, bookmarks, filters
+* 🔒 Okta session validation middleware
+* 🏁 Tag `v0.2.0` after CI fix + APK test
 
 ---
 
 ## 🧭 Contact / Ownership
 
-- **Project Owner:** Trevor  
-- **Tech Lead:** Vibe Coding (external)  
-- **Dev Stack:** Flutter + Dart + Firebase (planned)  
-- **Auth:** Okta (planned)  
-- **ERP Targets:** Infor, Epicor, Sage
+* **Project Owner:** Trevor (trevor.clark@nov.com) aka thetrev68
+* **Tech Lead:** Vibe Coding (ChatGPT40 Enterprise)
+* **Dev Stack:** Flutter + Dart + Firebase (planned)
+* **ERP Targets:** Infor, Epicor, Sage
 
 ---
 
-Let me know if you want a version for `README.md`, a tagged release, or an artifact link generator script for the `.apk` downloads.
+## 🔁 How to Use This Summary
+
+This summary primes future sessions by capturing the latest structure, dependencies, CI details, and development constraints for the MidRange OpsHub Flutter app. Paste it into ChatGPT at the start of any new session to resume context instantly.
+
+---
+
+## 🚀 Development Quick Start (Local)
+
+```sh
+# 1. Clone repo
+https://github.com/thetrev68/midrange_ops_hub.git
+
+# 2. Set up env file
+cp .env.example .env
+
+# 3. Run project
+flutter pub get && flutter run
+```
+
+---
+
+## 📅 Last Validated On
+
+**May 9, 2025**
