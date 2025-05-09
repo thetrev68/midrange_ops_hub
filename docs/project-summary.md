@@ -26,9 +26,15 @@
 * **Knowledge Base**
 
   * ERP article list w/ summaries and tags
-* **Environment Status**
 
-  * Health/status of Dev, QA, UAT, Prod
+* **Environment Status**
+  * Hierarchical status view: Environment Group → Tier (Dev/QA/Live) → Server
+  * Expandable UI with worst-case status chip on each level
+  * Tap into Server Detail View for:
+    * Role, IP, uptime, last restart
+    * CPU, memory, and disk usage (static + simulated)
+    * 24-hour performance history charts (line graphs using fl_chart)
+
 * **Change Requests**
 
   * Submission, approval, and history log
@@ -39,17 +45,20 @@
 
 ```
 lib/
-├── api/
-│   └── jira_service.dart
+├── data/
+│   └── mock_environment_data.dart
+├── models/
+│   ├── environment_group.dart
+│   ├── environment_tier.dart
+│   └── server_status.dart
 ├── screens/
-│   ├── change_requests_screen.dart
-│   ├── devops_tickets_screen.dart
-│   ├── env_status_screen.dart
-│   ├── home_screen.dart
-│   ├── kb_screen.dart
-│   ├── support_tickets_screen.dart
-│   └── tickets_screen.dart
-├── main.dart
+│   └── server_detail_screen.dart
+├── utils/
+│   └── status_chip.dart
+├── widgets/
+│   ├── env_group_tile.dart
+│   ├── env_tier_tile.dart
+│   └── server_status_tile.dart
 ```
 
 ---
@@ -65,6 +74,7 @@ lib/
   * CMake: 3.22.1
 * **Gradle:** Wrapper-provided (8.1+)
 * **Kotlin DSL:** Used for all Gradle config files (`.kts`)
+* **fl_chart:** fl_chart: ^0.64.0 (added to pubspec.yaml)
 * **VS Code**:
 
   * Required plugin: Gradle for Java

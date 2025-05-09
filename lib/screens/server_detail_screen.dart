@@ -1,12 +1,11 @@
 // lib/screens/server_detail_screen.dart
-// Page showing details for a specific server
+// Cleaned-up version of server detail screen with fixed structure and charts
 
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../models/server_status.dart';
 import '../utils/status_chip.dart';
-
-import 'package:fl_chart/fl_chart.dart';
 
 class ServerDetailScreen extends StatelessWidget {
   final ServerStatus server;
@@ -29,12 +28,13 @@ class ServerDetailScreen extends StatelessWidget {
     final uptime = _generateUptime();
     final lastRestart = _generateLastRestart();
     final cpuHistory = List.generate(24, (i) => Random().nextDouble() * 100);
+    final memoryHistory = List.generate(24, (i) => 2.0 + Random().nextDouble() * 6.0);
+    final diskHistory = List.generate(24, (i) => 40 + Random().nextDouble() * 50);
 
     return Scaffold(
       appBar: AppBar(title: Text(server.name)),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -58,24 +58,45 @@ class ServerDetailScreen extends StatelessWidget {
             const Text('• Disk Usage: 65%'),
             const SizedBox(height: 24),
             const Text('CPU Load - Last 24 Hours:', style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(
-              height: 200,
-              child: _buildCpuChart(),
-            ),
+            SizedBox(height: 200, child: _buildLineChart(cpuHistory, Colors.blue)),
             const SizedBox(height: 24),
             const Text('Memory Usage - Last 24 Hours:', style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(
-              height: 200,
-              child: _buildMemoryChart(memoryHistory),
-            ),
+            SizedBox(height: 200, child: _buildLineChart(memoryHistory, Colors.green)),
             const SizedBox(height: 24),
             const Text('Disk Usage - Last 24 Hours:', style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(
-              height: 200,
-              child: _buildDiskChart(diskHistory),
-            ),
+            SizedBox(height: 200, child: _buildLineChart(diskHistory, Colors.orange)),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLineChart(List<double> history, Color color) {
+    final data = List.generate(24, (i) => FlSpot(i.toDouble(), history[i]));
+    return LineChart(
+      LineChartData(
+        lineBarsData: [
+          LineChartBarData(
+            spots: data,
+            isCurved: true,
+            color: color,
+            barWidth: 2,
+            belowBarData: BarAreaData(show: false),
+            dotData: FlDotData(show: false),
+          ),
+        ],
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true, reservedSize: 22),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: true, reservedSize: 28),
+          ),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        gridData: FlGridData(show: true),
+        borderData: FlBorderData(show: true),
       ),
     );
   }

@@ -11,6 +11,7 @@ class EnvGroupTile extends StatelessWidget {
 
   const EnvGroupTile({super.key, required this.group});
 
+  
   @override
   Widget build(BuildContext context) {
     final allStatuses = group.tiers.expand((tier) => tier.servers.map((s) => s.status)).toList();
